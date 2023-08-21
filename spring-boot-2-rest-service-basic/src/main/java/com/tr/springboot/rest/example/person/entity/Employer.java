@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Employer extends Person {
 
     private String employerName;
+    private String company;
 
     public Employer( String employerName){
 

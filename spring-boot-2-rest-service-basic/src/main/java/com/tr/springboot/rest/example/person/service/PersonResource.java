@@ -2,10 +2,12 @@ package com.tr.springboot.rest.example.person.service;
 
 
 import com.tr.springboot.rest.example.person.dto.RequestDto;
+import com.tr.springboot.rest.example.person.dto.SorguTipi;
 import com.tr.springboot.rest.example.person.entity.Employee;
 import com.tr.springboot.rest.example.person.entity.Employer;
 import com.tr.springboot.rest.example.person.entity.Person;
 import commons.Constants;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -40,10 +42,11 @@ private IPersonRepository getPersonRepositoryFromType(String type){
         return employerRepository;
     }
 }
-    @GetMapping("/person/{type}")
-    public List<Person> retrieveAllPersonsByType(@PathVariable String type,@RequestBody RequestDto requestDto) {
+    @GetMapping("/person/{type}/{sorguTip}")
+    public List<Person> retrieveAllPersonsByType(@PathVariable String type, @PathVariable("sorguTip") Integer sorguTip) {
      //   List<Person> result=new ArrayList<>();
         IPersonRepository personRepositoryLcl=getPersonRepositoryFromType(type);
+        RequestDto requestDto=new RequestDto(sorguTip);
         List<Person> result= personRepositoryLcl.findByType(requestDto);
      /*   if(type.equals("employee")) {
             List<Employee> employees= employeeRepository.findByType(requestDto);
