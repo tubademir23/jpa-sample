@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Person {
+public abstract class Person {
     private static Map<Integer, Class> integerClassMap;
     static{
         integerClassMap =new HashMap<Integer, Class>();
@@ -36,6 +36,7 @@ public class Person {
     protected Long id;
     @Transient
     private Constants.PersonType type;
+
     private Integer personType;
     public void  guncelle(int i){};
     @PrePersist

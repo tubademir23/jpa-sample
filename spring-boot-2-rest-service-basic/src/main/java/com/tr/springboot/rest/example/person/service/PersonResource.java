@@ -1,30 +1,58 @@
 package com.tr.springboot.rest.example.person.service;
 
 
+import com.tr.springboot.rest.example.person.dto.RequestDto;
 import com.tr.springboot.rest.example.person.entity.Employee;
 import com.tr.springboot.rest.example.person.entity.Employer;
 import com.tr.springboot.rest.example.person.entity.Person;
 import commons.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class PersonResource {
 
+    @Qualifier("IPersonRepository")
     @Autowired
     private IPersonRepository personRepository;
-
+    @Autowired
+    private IEmployerRepository employerRepository;
+    @Autowired
+    private IEmployeeRepository employeeRepository;
     @GetMapping("/persons")
     public List<Person> retrieveAllPersons() {
         List<Person> resultEmployee=personRepository.findAllEmployee();
          return resultEmployee;
+    }
+private IPersonRepository getPersonRepositoryFromType(String type){
+    if(type.equals("employee")) {
+        return employeeRepository;
+    }else{
+        return employerRepository;
+    }
+}
+    @GetMapping("/person/{type}")
+    public List<Person> retrieveAllPersonsByType(@PathVariable String type,@RequestBody RequestDto requestDto) {
+     //   List<Person> result=new ArrayList<>();
+        IPersonRepository personRepositoryLcl=getPersonRepositoryFromType(type);
+        List<Person> result= personRepositoryLcl.findByType(requestDto);
+     /*   if(type.equals("employee")) {
+            List<Employee> employees= employeeRepository.findByType(requestDto);
+            result.addAll(employees);
+        }else{
+            List<Employer> employers=  employerRepository.findByType(requestDto);
+            result.addAll(employers);
+        }*/
+         return result;
     }
 
     @GetMapping("/persons/{id}")
@@ -87,7 +115,7 @@ public class PersonResource {
             }
         }
        /// personRepository.saveAll(persons);
-        Person savedPerson = personRepository.save(persons.get(0));
+       Person savedPerson = (Person)personRepository.save(persons.get(0));
 
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
